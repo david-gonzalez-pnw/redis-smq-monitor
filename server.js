@@ -33,7 +33,12 @@ function server(config = {}) {
             });
             const io = Socket(server, socketOpts);
 
-            const { redis: options = {} } = config;
+            let options = {};
+            if(config.hasOwnProperty('redis') && config.redis.hasOwnProperty('driver')) {
+                ({ redis: { options = {} }}) = config;
+            } else {
+                ({ redis: options = {} }) = config;
+            }
             const client = redis.createClient(options);
             client.on('ready', () => {
                 client.subscribe('stats');
